@@ -1,0 +1,23 @@
+version: '3.8'
+services:
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: users
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+  app:
+    build: .
+    depends_on:
+      - db
+    environment:
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_NAME: users
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      JWT_SECRET: c2VjcmV0LWtleS0xMjM0NTY3ODkw
+    ports:
+      - "8080:8080"
