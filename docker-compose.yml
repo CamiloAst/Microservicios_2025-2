@@ -14,7 +14,7 @@ services:
 
   app:
     build:
-      context: ./       # 👈 muy importante
+      context: ./
       dockerfile: Dockerfile
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/authdb
