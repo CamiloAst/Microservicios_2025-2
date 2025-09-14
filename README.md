@@ -3,7 +3,7 @@
 Spring Boot 3 REST API for managing users with JWT security.
 
 ## Features
-- Register and login users with JWT authentication
+- User registration via `POST /api/users` and login with JWT authentication
 - CRUD operations for users (admin only)
 - Forgot and reset password flows
 - PostgreSQL database
