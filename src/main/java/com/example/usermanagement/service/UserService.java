@@ -9,11 +9,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.UUID;
@@ -61,8 +65,16 @@ public class UserService {
         return toResponse(user);
     }
 
+    @PreAuthorize("#id == authentication.principal.id")
     public UserResponse updateUser(Long id, RegisterRequest request) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String currentUsername = auth.getName();
+
         User user = userRepository.findById(id).orElseThrow(() -> new RuntimeException("User not found"));
+        if (!user.getUsername().equals(currentUsername)) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You cannot update this user");
+        }
+
         user.setUsername(request.getUsername());
         user.setEmail(request.getEmail());
         if (request.getPassword() != null) {
@@ -72,8 +84,16 @@ public class UserService {
         return toResponse(user);
     }
 
+    @PreAuthorize("#id == authentication.principal.id")
     public void deleteUser(Long id) {
-        userRepository.deleteById(id);
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String currentUsername = auth.getName();
+
+        User user = userRepository.findById(id).orElseThrow(() -> new RuntimeException("User not found"));
+        if (!user.getUsername().equals(currentUsername)) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You cannot delete this user");
+        }
+        userRepository.delete(user);
     }
 
     public String forgotPassword(ForgotPasswordRequest request) {
