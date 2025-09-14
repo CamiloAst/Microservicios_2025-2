@@ -5,6 +5,8 @@ import com.example.usermanagement.dto.UserResponse;
 import com.example.usermanagement.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -22,6 +24,33 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+
+    @PostMapping
+    @Operation(summary = "Crear un nuevo usuario")
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Usuario creado",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = UserResponse.class)
+                    )
+            ),
+            @ApiResponse(responseCode = "400", description = "Datos inválidos", content = @Content),
+            @ApiResponse(responseCode = "409", description = "El usuario ya existe", content = @Content)
+    })
+    public UserResponse createUser(
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "Datos de registro del usuario",
+                    required = true,
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = RegisterRequest.class)
+                    )
+            )
+            @RequestBody RegisterRequest request) {
+        return userService.register(request);
+    }
 
     @GetMapping
     //@PreAuthorize("hasRole('ADMIN')")

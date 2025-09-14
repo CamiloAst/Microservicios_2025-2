@@ -19,37 +19,6 @@ public class AuthController {
     @Autowired
     private UserService userService;
 
-    @PostMapping("/register")
-    @Operation(
-        summary = "Registrar un nuevo usuario",
-        description = "Crea una cuenta con los datos proporcionados"
-    )
-    @ApiResponses({
-        @ApiResponse(
-            responseCode = "200",
-            description = "Usuario registrado",
-            content = @Content(
-                mediaType = "application/json",
-                schema = @Schema(implementation = UserResponse.class)
-            )
-        ),
-        @ApiResponse(responseCode = "400", description = "Datos inválidos", content = @Content),
-        @ApiResponse(responseCode = "409", description = "El usuario ya existe", content = @Content)
-    })
-    public UserResponse register(
-        @io.swagger.v3.oas.annotations.parameters.RequestBody(
-            description = "Datos de registro del usuario",
-            required = true,
-            content = @Content(
-                mediaType = "application/json",
-                schema = @Schema(implementation = RegisterRequest.class)
-            )
-        )
-        @RequestBody RegisterRequest request
-    ) {
-        return userService.register(request);
-    }
-
     @PostMapping("/login")
     @Operation(
         summary = "Iniciar sesión",
