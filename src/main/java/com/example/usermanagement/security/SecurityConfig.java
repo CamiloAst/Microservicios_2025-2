@@ -13,6 +13,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.http.HttpMethod;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -49,8 +50,10 @@ public class SecurityConfig {
                         ).permitAll()
                         // auth públicas
                         .requestMatchers("/api/auth/**").permitAll()
-                        // reset password pública
-                        .requestMatchers("/api/users/reset").permitAll()
+                        // registro y restablecimiento de usuarios
+                        .requestMatchers(HttpMethod.POST, "/api/users").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/users/reset").permitAll()
+
                         // todo lo demás requiere token
                         .requestMatchers("/api/users/**").authenticated()
                         .anyRequest().authenticated()
