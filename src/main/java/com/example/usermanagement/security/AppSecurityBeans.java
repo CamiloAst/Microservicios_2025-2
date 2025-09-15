@@ -20,7 +20,7 @@ public class AppSecurityBeans {
         return new BCryptPasswordEncoder();
     }
 
-    // *** Usa tu CustomUserDetailsService; no declares otro UserDetailsService ***
+
     @Bean
     public AuthenticationProvider authenticationProvider(
             @Qualifier("customUserDetailsService") CustomUserDetailsService uds,
