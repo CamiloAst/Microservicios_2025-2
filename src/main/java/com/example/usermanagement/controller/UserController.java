@@ -67,7 +67,7 @@ public class UserController {
         return userService.register(request);
     }
 
-    @PostMapping("/reset")
+    @PatchMapping("/password")
     @Operation(
             summary = "Restablecer contraseña",
             description = "Establece una nueva contraseña usando el token recibido"

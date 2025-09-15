@@ -67,7 +67,7 @@ public class AuthController {
         return userService.login(request);
     }
 
-    @PostMapping("/forgot")
+    @PostMapping("/token")
     @Operation(
         summary = "Solicitar restablecimiento de contraseña",
         description = "Genera un token para restablecer la contraseña"
