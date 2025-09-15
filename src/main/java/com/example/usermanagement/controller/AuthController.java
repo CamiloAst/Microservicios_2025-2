@@ -35,8 +35,23 @@ public class AuthController {
                 schema = @Schema(implementation = String.class)
             )
         ),
-        @ApiResponse(responseCode = "400", description = "Credenciales inválidas", content = @Content),
-        @ApiResponse(responseCode = "401", description = "No autorizado", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class), examples = @ExampleObject(value = "{\"error\":\"Unauthorized\"}")))
+
+        @ApiResponse(
+          responseCode = "401", 
+          description = "No autorizado", 
+          content = @Content(
+            mediaType = "application/json", 
+            schema = @Schema(implementation = ErrorResponse.class), 
+            examples = @ExampleObject(value = "{\"error\":\"Unauthorized\"}"))),
+      
+        @ApiResponse(
+            responseCode = "400",
+            description = "Credenciales inválidas",
+            content = @Content(
+                mediaType = "application/json",
+                schema = @Schema(implementation = ErrorResponse.class)
+            )
+        )
     })
     public String login(
         @io.swagger.v3.oas.annotations.parameters.RequestBody(
@@ -66,8 +81,22 @@ public class AuthController {
                 schema = @Schema(implementation = String.class)
             )
         ),
-        @ApiResponse(responseCode = "400", description = "Datos inválidos", content = @Content),
-        @ApiResponse(responseCode = "404", description = "Usuario no encontrado", content = @Content)
+        @ApiResponse(
+            responseCode = "400",
+            description = "Datos inválidos",
+            content = @Content(
+                mediaType = "application/json",
+                schema = @Schema(implementation = ErrorResponse.class)
+            )
+        ),
+        @ApiResponse(
+            responseCode = "404",
+            description = "Usuario no encontrado",
+            content = @Content(
+                mediaType = "application/json",
+                schema = @Schema(implementation = ErrorResponse.class)
+            )
+        )
     })
     public String forgotPassword(
         @io.swagger.v3.oas.annotations.parameters.RequestBody(

@@ -1,5 +1,6 @@
 package com.example.usermanagement.controller;
 
+import com.example.usermanagement.dto.ErrorResponse;
 import com.example.usermanagement.dto.RegisterRequest;
 import com.example.usermanagement.dto.ResetPasswordRequest;
 import com.example.usermanagement.dto.UserResponse;
@@ -39,8 +40,22 @@ public class UserController {
                             schema = @Schema(implementation = UserResponse.class)
                     )
             ),
-            @ApiResponse(responseCode = "400", description = "Datos inválidos", content = @Content),
-            @ApiResponse(responseCode = "409", description = "El usuario ya existe", content = @Content)
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "Datos inválidos",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponse.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "409",
+                    description = "El usuario ya existe",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponse.class)
+                    )
+            )
     })
     public UserResponse createUser(
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
@@ -62,8 +77,22 @@ public class UserController {
     )
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Contraseña restablecida", content = @Content),
-            @ApiResponse(responseCode = "400", description = "Datos inválidos", content = @Content),
-            @ApiResponse(responseCode = "404", description = "Token inválido", content = @Content)
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "Datos inválidos",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponse.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Token inválido",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponse.class)
+                    )
+            )
     })
     public void resetPassword(
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
@@ -78,54 +107,111 @@ public class UserController {
     ) {
             userService.resetPassword(request);
     }
-      @GetMapping
-      //@PreAuthorize("hasRole('ADMIN')")
-      @Operation(summary = "Lista todos los usuarios", security = @SecurityRequirement(name = "bearerAuth"))
-      @ApiResponses(value = {
-              @ApiResponse(responseCode = "200", description = "Usuarios listados"),
-              @ApiResponse(responseCode = "401", description = "No autorizado", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class), examples = @ExampleObject(value = "{\"error\":\"Unauthorized\"}"))),
-              @ApiResponse(responseCode = "404", description = "No se encontraron usuarios")
-      })
-      public Page<UserResponse> listUsers(@Parameter(description = "Información de paginación") Pageable pageable) {
-          return userService.getUsers(pageable);
-      }
 
-      @GetMapping("/{id}")
-      //@PreAuthorize("hasRole('ADMIN')")
-      @Operation(summary = "Obtiene un usuario por ID", security = @SecurityRequirement(name = "bearerAuth"))
-      @ApiResponses(value = {
-              @ApiResponse(responseCode = "200", description = "Usuario encontrado"),
-              @ApiResponse(responseCode = "401", description = "No autorizado", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class), examples = @ExampleObject(value = "{\"error\":\"Unauthorized\"}"))),
-              @ApiResponse(responseCode = "404", description = "Usuario no encontrado")
-      })
-      public UserResponse getUser(@Parameter(description = "ID del usuario", required = true) @PathVariable Long id) {
-          return userService.getUser(id);
-      }
+    @GetMapping
+    //@PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "Lista todos los usuarios", security = @SecurityRequirement(name = "bearerAuth"))
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Usuarios listados"),
+            @ApiResponse(
+                    responseCode = "401",
+                    description = "No autorizado",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponse.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "No se encontraron usuarios",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponse.class)
+                    )
+            )
+    })
+    public Page<UserResponse> listUsers(@Parameter(description = "Información de paginación") Pageable pageable) {
+        return userService.getUsers(pageable);
+    }
 
-      @PutMapping("/{id}")
-      //@PreAuthorize("hasRole('ADMIN')")
-      @Operation(summary = "Actualiza un usuario existente", security = @SecurityRequirement(name = "bearerAuth"))
-      @ApiResponses(value = {
-              @ApiResponse(responseCode = "200", description = "Usuario actualizado"),
-              @ApiResponse(responseCode = "401", description = "No autorizado", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class), examples = @ExampleObject(value = "{\"error\":\"Unauthorized\"}"))),
-              @ApiResponse(responseCode = "404", description = "Usuario no encontrado")
-      })
-      public UserResponse updateUser(
-              @Parameter(description = "ID del usuario", required = true) @PathVariable Long id,
-              @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Datos del usuario a actualizar", required = true)
-              @RequestBody RegisterRequest request) {
-          return userService.updateUser(id, request);
-      }
+    @GetMapping("/{id}")
+    //@PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "Obtiene un usuario por ID", security = @SecurityRequirement(name = "bearerAuth"))
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Usuario encontrado"),
+            @ApiResponse(
+                    responseCode = "401",
+                    description = "No autorizado",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponse.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Usuario no encontrado",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponse.class)
+                    )
+            )
+    })
+    public UserResponse getUser(@Parameter(description = "ID del usuario", required = true) @PathVariable Long id) {
+        return userService.getUser(id);
+    }
 
-      @DeleteMapping("/{id}")
-      //@PreAuthorize("hasRole('ADMIN')")
-      @Operation(summary = "Elimina un usuario", security = @SecurityRequirement(name = "bearerAuth"))
-      @ApiResponses(value = {
-              @ApiResponse(responseCode = "204", description = "Usuario eliminado"),
-              @ApiResponse(responseCode = "401", description = "No autorizado", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class), examples = @ExampleObject(value = "{\"error\":\"Unauthorized\"}"))),
-              @ApiResponse(responseCode = "404", description = "Usuario no encontrado")
-      })
-      public void deleteUser(@Parameter(description = "ID del usuario", required = true) @PathVariable Long id) {
-          userService.deleteUser(id);
-      }
+    @PutMapping("/{id}")
+    //@PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "Actualiza un usuario existente", security = @SecurityRequirement(name = "bearerAuth"))
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Usuario actualizado"),
+            @ApiResponse(
+                    responseCode = "401",
+                    description = "No autorizado",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponse.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Usuario no encontrado",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponse.class)
+                    )
+            )
+    })
+    public UserResponse updateUser(
+            @Parameter(description = "ID del usuario", required = true) @PathVariable Long id,
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Datos del usuario a actualizar", required = true)
+            @RequestBody RegisterRequest request) {
+        return userService.updateUser(id, request);
+    }
+
+    @DeleteMapping("/{id}")
+    //@PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "Elimina un usuario", security = @SecurityRequirement(name = "bearerAuth"))
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Usuario eliminado"),
+            @ApiResponse(
+                    responseCode = "401",
+                    description = "No autorizado",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponse.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Usuario no encontrado",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponse.class)
+                    )
+            )
+    })
+    public void deleteUser(@Parameter(description = "ID del usuario", required = true) @PathVariable Long id) {
+        userService.deleteUser(id);
+    }
 }
