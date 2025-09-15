@@ -53,6 +53,7 @@ public class SecurityConfig {
                         // registro y restablecimiento de usuarios
                         .requestMatchers(HttpMethod.POST, "/api/users").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/users/reset").permitAll()
+
                         // todo lo demás requiere token
                         .requestMatchers("/api/users/**").authenticated()
                         .anyRequest().authenticated()
