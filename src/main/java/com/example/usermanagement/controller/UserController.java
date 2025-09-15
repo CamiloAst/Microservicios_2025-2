@@ -1,6 +1,7 @@
 package com.example.usermanagement.controller;
 
 import com.example.usermanagement.dto.RegisterRequest;
+import com.example.usermanagement.dto.ResetPasswordRequest;
 import com.example.usermanagement.dto.UserResponse;
 import com.example.usermanagement.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -52,6 +53,29 @@ public class UserController {
         return userService.register(request);
     }
 
+    @PostMapping("/reset")
+    @Operation(
+            summary = "Restablecer contraseña",
+            description = "Establece una nueva contraseña usando el token recibido"
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Contraseña restablecida", content = @Content),
+            @ApiResponse(responseCode = "400", description = "Datos inválidos", content = @Content),
+            @ApiResponse(responseCode = "404", description = "Token inválido", content = @Content)
+    })
+    public void resetPassword(
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "Token de restablecimiento y nueva contraseña",
+                    required = true,
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ResetPasswordRequest.class)
+                    )
+            )
+            @RequestBody ResetPasswordRequest request
+    ) {
+            userService.resetPassword(request);
+    }
     @GetMapping
     //@PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Lista todos los usuarios", security = @SecurityRequirement(name = "bearerAuth"))

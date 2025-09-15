@@ -49,6 +49,8 @@ public class SecurityConfig {
                         ).permitAll()
                         // auth públicas
                         .requestMatchers("/api/auth/**").permitAll()
+                        // reset password pública
+                        .requestMatchers("/api/users/reset").permitAll()
                         // todo lo demás requiere token
                         .requestMatchers("/api/users/**").authenticated()
                         .anyRequest().authenticated()
