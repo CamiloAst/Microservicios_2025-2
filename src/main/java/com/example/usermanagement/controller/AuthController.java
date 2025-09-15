@@ -4,12 +4,14 @@ import com.example.usermanagement.dto.*;
 import com.example.usermanagement.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import com.example.usermanagement.exception.ErrorResponse;
 
 @Tag(name = "Authentication")
 @RestController
@@ -34,7 +36,7 @@ public class AuthController {
             )
         ),
         @ApiResponse(responseCode = "400", description = "Credenciales inválidas", content = @Content),
-        @ApiResponse(responseCode = "401", description = "No autorizado", content = @Content)
+        @ApiResponse(responseCode = "401", description = "No autorizado", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class), examples = @ExampleObject(value = "{\"error\":\"Unauthorized\"}")))
     })
     public String login(
         @io.swagger.v3.oas.annotations.parameters.RequestBody(
