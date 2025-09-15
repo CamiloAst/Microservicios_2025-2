@@ -4,6 +4,7 @@ import com.example.usermanagement.dto.ErrorResponse;
 import com.example.usermanagement.dto.RegisterRequest;
 import com.example.usermanagement.dto.ResetPasswordRequest;
 import com.example.usermanagement.dto.UserResponse;
+import com.example.usermanagement.dto.ErrorResponse;
 import com.example.usermanagement.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -113,6 +114,7 @@ public class UserController {
     @Operation(summary = "Lista todos los usuarios", security = @SecurityRequirement(name = "bearerAuth"))
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Usuarios listados"),
+            @ApiResponse(responseCode = "403", description = "Prohibido", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
             @ApiResponse(
                     responseCode = "401",
                     description = "No autorizado",
@@ -129,6 +131,7 @@ public class UserController {
                             schema = @Schema(implementation = ErrorResponse.class)
                     )
             )
+
     })
     public Page<UserResponse> listUsers(@Parameter(description = "Información de paginación") Pageable pageable) {
         return userService.getUsers(pageable);
@@ -139,6 +142,7 @@ public class UserController {
     @Operation(summary = "Obtiene un usuario por ID", security = @SecurityRequirement(name = "bearerAuth"))
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Usuario encontrado"),
+            @ApiResponse(responseCode = "403", description = "Prohibido", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
             @ApiResponse(
                     responseCode = "401",
                     description = "No autorizado",
@@ -155,6 +159,7 @@ public class UserController {
                             schema = @Schema(implementation = ErrorResponse.class)
                     )
             )
+
     })
     public UserResponse getUser(@Parameter(description = "ID del usuario", required = true) @PathVariable Long id) {
         return userService.getUser(id);
@@ -165,6 +170,7 @@ public class UserController {
     @Operation(summary = "Actualiza un usuario existente", security = @SecurityRequirement(name = "bearerAuth"))
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Usuario actualizado"),
+            @ApiResponse(responseCode = "403", description = "Prohibido", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
             @ApiResponse(
                     responseCode = "401",
                     description = "No autorizado",
@@ -194,6 +200,8 @@ public class UserController {
     @Operation(summary = "Elimina un usuario", security = @SecurityRequirement(name = "bearerAuth"))
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Usuario eliminado"),
+            @ApiResponse(responseCode = "403", description = "Prohibido", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+
             @ApiResponse(
                     responseCode = "401",
                     description = "No autorizado",
@@ -210,6 +218,7 @@ public class UserController {
                             schema = @Schema(implementation = ErrorResponse.class)
                     )
             )
+
     })
     public void deleteUser(@Parameter(description = "ID del usuario", required = true) @PathVariable Long id) {
         userService.deleteUser(id);
