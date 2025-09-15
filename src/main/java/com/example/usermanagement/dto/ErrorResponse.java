@@ -1,20 +1,30 @@
 package com.example.usermanagement.dto;
 
 public class ErrorResponse {
-    private String error;
+    private int code;
+    private String message;
 
     public ErrorResponse() {
     }
 
-    public ErrorResponse(String error) {
-        this.error = error;
+    public ErrorResponse(int code, String message) {
+        this.code = code;
+        this.message = message;
     }
 
-    public String getError() {
-        return error;
+    public int getCode() {
+        return code;
     }
 
-    public void setError(String error) {
-        this.error = error;
+    public void setCode(int code) {
+        this.code = code;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
     }
 }
