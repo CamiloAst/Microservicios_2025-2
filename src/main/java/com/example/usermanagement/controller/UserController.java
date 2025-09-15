@@ -3,6 +3,7 @@ package com.example.usermanagement.controller;
 import com.example.usermanagement.dto.RegisterRequest;
 import com.example.usermanagement.dto.ResetPasswordRequest;
 import com.example.usermanagement.dto.UserResponse;
+import com.example.usermanagement.dto.ErrorResponse;
 import com.example.usermanagement.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -82,6 +83,7 @@ public class UserController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Usuarios listados"),
             @ApiResponse(responseCode = "401", description = "No autorizado"),
+            @ApiResponse(responseCode = "403", description = "Prohibido", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
             @ApiResponse(responseCode = "404", description = "No se encontraron usuarios")
     })
     public Page<UserResponse> listUsers(@Parameter(description = "Información de paginación") Pageable pageable) {
@@ -94,6 +96,7 @@ public class UserController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Usuario encontrado"),
             @ApiResponse(responseCode = "401", description = "No autorizado"),
+            @ApiResponse(responseCode = "403", description = "Prohibido", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
             @ApiResponse(responseCode = "404", description = "Usuario no encontrado")
     })
     public UserResponse getUser(@Parameter(description = "ID del usuario", required = true) @PathVariable Long id) {
@@ -106,6 +109,7 @@ public class UserController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Usuario actualizado"),
             @ApiResponse(responseCode = "401", description = "No autorizado"),
+            @ApiResponse(responseCode = "403", description = "Prohibido", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
             @ApiResponse(responseCode = "404", description = "Usuario no encontrado")
     })
     public UserResponse updateUser(
@@ -121,6 +125,7 @@ public class UserController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Usuario eliminado"),
             @ApiResponse(responseCode = "401", description = "No autorizado"),
+            @ApiResponse(responseCode = "403", description = "Prohibido", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
             @ApiResponse(responseCode = "404", description = "Usuario no encontrado")
     })
     public void deleteUser(@Parameter(description = "ID del usuario", required = true) @PathVariable Long id) {
