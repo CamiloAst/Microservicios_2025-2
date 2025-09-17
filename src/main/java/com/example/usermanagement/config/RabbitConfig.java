@@ -1,0 +1,17 @@
+package com.example.usermanagement.config;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+import java.util.Queue;
+
+@Configuration
+public class RabbitConfig {
+
+    public static final String USER_EVENTS_QUEUE = "user.events";
+
+    @Bean
+    public Queue userEventsQueue() {
+        return new Queue(USER_EVENTS_QUEUE, true);
+    }
+}
