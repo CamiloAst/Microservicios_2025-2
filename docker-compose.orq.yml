@@ -1,0 +1,81 @@
+services:
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_PASSWORD: postgres         # superusuario por defecto
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./db/init:/docker-entrypoint-initdb.d:ro  # ejecuta 00-init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d authdb"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  rabbitmq:
+    image: rabbitmq:3.13-management
+    ports:
+      - "5672:5672"
+      - "15672:15672"  # UI http://localhost:15672 (guest/guest)
+    healthcheck:
+      test: ["CMD-SHELL", "rabbitmq-diagnostics -q ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # === Tu API de autenticación (proyecto Microservicios_2025-2) ===
+  auth-app:
+    build:
+      context: ./          # ESTE repo
+      dockerfile: Dockerfile
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/authdb
+      SPRING_DATASOURCE_USERNAME: authuser         # si usas el rol creado
+      SPRING_DATASOURCE_PASSWORD: authpass
+      # Si prefieres usar el superusuario:
+      # SPRING_DATASOURCE_USERNAME: postgres
+      # SPRING_DATASOURCE_PASSWORD: postgres
+      SPRING_RABBITMQ_HOST: rabbitmq
+      SPRING_RABBITMQ_PORT: 5672
+      APP_JWT_SECRET: change-me-super-secret
+      APP_JWT_MINUTES: 60
+    depends_on:
+      db:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    ports:
+      - "8080:8080"
+
+  # === Microservicio de notificaciones (repo notification_system) ===
+  notification-service:
+    build:
+      context: C:\Users\Valmunera\Documents\GitHub\notification_system   # RUTA RELATIVA
+      dockerfile: Dockerfile                                # asumiendo que ahí hay un Dockerfile
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      SPRING_RABBITMQ_HOST: rabbitmq
+      SPRING_RABBITMQ_PORT: 5672
+      # Si este servicio también usa DB, apúntalo a "db" y a su base:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/notifications
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+      # Evita choque de puertos con auth-app
+      SERVER_PORT: 8081
+      # Variables de tu RabbitConfig si las externalizas:
+      # NOTIFICATION_QUEUE: notification.queue
+      # NOTIFICATION_EXCHANGE: notification.exchange
+      # NOTIFICATION_ROUTING_KEY: notification.routingkey
+    depends_on:
+      db:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    ports:
+      - "8081:8081"
+
+# (opcional) nombra la red por claridad, Compose crea una por defecto igualmente
+networks:
+  default:
+    name: micro-net
