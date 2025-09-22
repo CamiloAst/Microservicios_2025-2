@@ -1,7 +1,9 @@
 package com.example.usermanagement.controller;
 
 import com.example.usermanagement.dto.*;
+import com.example.usermanagement.entity.User;
 import com.example.usermanagement.events.UserLoginEvent;
+import com.example.usermanagement.repository.UserRepository;
 import com.example.usermanagement.service.UserEventPublisher;
 import com.example.usermanagement.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -15,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.Instant;
+import java.util.Optional;
 
 @Tag(name = "Authentication")
 @RestController
@@ -25,6 +28,8 @@ public class AuthController {
     private UserService userService;
     @Autowired
     private UserEventPublisher userEventPublisher;
+    @Autowired
+    private UserRepository userRepository;
 
     @PostMapping("/login")
     @Operation(
@@ -69,8 +74,9 @@ public class AuthController {
         )
         @RequestBody LoginRequest request
     ) {
+        Optional<User> user = userRepository.findByUsername(request.getUsername());
         userEventPublisher.publish(
-                new UserLoginEvent(request.getEmail(),request.getEmail(), Instant.now().toString()));
+                new UserLoginEvent(request.getUsername(),user.get().getEmail(), Instant.now().toString()));
         return userService.login(request);
     }
 

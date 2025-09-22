@@ -50,7 +50,7 @@ public class UserService {
 
     public String login(LoginRequest request) {
         Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
+                new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
         return jwtService.generateToken(authentication.getName());
     }
 
@@ -64,6 +64,7 @@ public class UserService {
         User user = userRepository.findById(id).orElseThrow(() -> new RuntimeException("User not found"));
         return toResponse(user);
     }
+
 
     @PreAuthorize("#id == authentication.principal.id")
     public UserResponse updateUser(Long id, RegisterRequest request) {
