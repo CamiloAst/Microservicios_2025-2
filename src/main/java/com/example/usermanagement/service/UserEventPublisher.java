@@ -17,13 +17,12 @@ public class UserEventPublisher {
         this.rabbitTemplate = rabbitTemplate;
     }
 
-    public void publish(String eventType, Object payload) {
-        Map<String, Object> event = new HashMap<>();
-        event.put("type", eventType);
-        event.put("timestamp", Instant.now().toString());
-        event.put("data", payload);
+    public void publish(Object payload) {
 
-        rabbitTemplate.convertAndSend(RabbitConfig.USER_EVENTS_QUEUE, event);
-        System.out.println("📤 Evento publicado: " + eventType);
+        rabbitTemplate.convertAndSend(
+                RabbitConfig.USER_EVENTS_EXCHANGE,
+                RabbitConfig.USER_EVENTS_ROUTING_KEY,
+                payload);
+        System.out.println("📤 Evento publicado: ");
     }
 }

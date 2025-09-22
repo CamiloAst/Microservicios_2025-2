@@ -1,6 +1,7 @@
 package com.example.usermanagement.controller;
 
 import com.example.usermanagement.dto.*;
+import com.example.usermanagement.events.UserLoginEvent;
 import com.example.usermanagement.service.UserEventPublisher;
 import com.example.usermanagement.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -12,6 +13,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.Instant;
 
 @Tag(name = "Authentication")
 @RestController
@@ -66,6 +69,8 @@ public class AuthController {
         )
         @RequestBody LoginRequest request
     ) {
+        userEventPublisher.publish(
+                new UserLoginEvent(request.getEmail(),request.getEmail(), Instant.now().toString()));
         return userService.login(request);
     }
 

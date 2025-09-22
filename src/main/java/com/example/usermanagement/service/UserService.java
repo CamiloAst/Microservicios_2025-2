@@ -50,7 +50,7 @@ public class UserService {
 
     public String login(LoginRequest request) {
         Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
+                new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
         return jwtService.generateToken(authentication.getName());
     }
 

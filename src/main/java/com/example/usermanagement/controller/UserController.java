@@ -4,6 +4,7 @@ import com.example.usermanagement.dto.ErrorResponse;
 import com.example.usermanagement.dto.RegisterRequest;
 import com.example.usermanagement.dto.ResetPasswordRequest;
 import com.example.usermanagement.dto.UserResponse;
+import com.example.usermanagement.service.UserEventPublisher;
 import com.example.usermanagement.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -25,6 +26,8 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+    @Autowired
+    private UserEventPublisher userEventPublisher;
 
     @PostMapping
     @Operation(summary = "Crear un nuevo usuario")
