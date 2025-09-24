@@ -80,7 +80,7 @@ public class UserController {
             @RequestBody RegisterRequest request) {
         UserResponse userResponse = userService.register(request);
         try{
-            userEventPublisher.publish(new UserCreatedEvent(request.getEmail(),request.getUsername()));
+            userEventPublisher.publish(new UserCreatedEvent(request.getEmail(),request.getUsername(),request.getPhoneNumber()));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
