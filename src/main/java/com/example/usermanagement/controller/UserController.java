@@ -4,6 +4,10 @@ import com.example.usermanagement.dto.ErrorResponse;
 import com.example.usermanagement.dto.RegisterRequest;
 import com.example.usermanagement.dto.ResetPasswordRequest;
 import com.example.usermanagement.dto.UserResponse;
+import com.example.usermanagement.entity.User;
+import com.example.usermanagement.events.PasswordChangedEvent;
+import com.example.usermanagement.events.UserCreatedEvent;
+import com.example.usermanagement.repository.UserRepository;
 import com.example.usermanagement.service.UserEventPublisher;
 import com.example.usermanagement.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -17,7 +21,10 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.Instant;
 
 @Tag(name = "Users")
 @RestController
@@ -28,6 +35,10 @@ public class UserController {
     private UserService userService;
     @Autowired
     private UserEventPublisher userEventPublisher;
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @PostMapping
     @Operation(summary = "Crear un nuevo usuario")
@@ -67,7 +78,13 @@ public class UserController {
                     )
             )
             @RequestBody RegisterRequest request) {
-        return userService.register(request);
+        UserResponse userResponse = userService.register(request);
+        try{
+            userEventPublisher.publish(new UserCreatedEvent(request.getEmail(),request.getUsername()));
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        return userResponse;
     }
 
     @PatchMapping("/password")
@@ -105,7 +122,18 @@ public class UserController {
             )
             @RequestBody ResetPasswordRequest request
     ) {
-            userService.resetPassword(request);
+        User user = userRepository.findByResetToken(request.getToken())
+                .orElseThrow(() -> new RuntimeException("Token inválido"));
+
+        try {
+            PasswordChangedEvent event = new PasswordChangedEvent(
+                    user.getEmail(),
+                    Instant.now()
+            );
+            userEventPublisher.publish(event);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @GetMapping
