@@ -2,6 +2,8 @@ package com.example.usermanagement.controller;
 
 import com.example.usermanagement.dto.*;
 import com.example.usermanagement.entity.User;
+import com.example.usermanagement.events.PasswordChangedEvent;
+import com.example.usermanagement.events.PasswordRecoveryRequestedEvent;
 import com.example.usermanagement.events.UserLoginEvent;
 import com.example.usermanagement.repository.UserRepository;
 import com.example.usermanagement.service.UserEventPublisher;
@@ -88,7 +90,10 @@ public class AuthController {
 
         try {
             userEventPublisher.publish(
-                    new UserLoginEvent(user.getUsername(), user.getEmail(), Instant.now().toString()));
+                    new UserLoginEvent(user.getUsername(),
+                            user.getEmail(),
+                            user.getPhoneNumber() ,
+                            Instant.now().toString()));
             log.info("✅ Login exitoso, token generado para {}", request.getUsername());
 
         } catch (Exception e) {
@@ -139,6 +144,20 @@ public class AuthController {
         )
         @RequestBody ForgotPasswordRequest request
     ) {
+        User user = userRepository.findByEmail(request.getEmail())
+                .orElseThrow(()-> new UsernameNotFoundException("Usuario no existe"));
+
+        try {
+            userEventPublisher.publish(
+                    new PasswordRecoveryRequestedEvent(
+                            user.getId(),
+                            user.getUsername(),
+                            user.getEmail(),
+                            user.getPhoneNumber() ,
+                            Instant.now().toString()));
+        } catch (Exception e) {
+            // log.warn("No se pudo publicar evento de login", e);
+        }
         return userService.forgotPassword(request);
     }
 }

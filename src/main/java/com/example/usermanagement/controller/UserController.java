@@ -80,7 +80,10 @@ public class UserController {
             @RequestBody RegisterRequest request) {
         UserResponse userResponse = userService.register(request);
         try{
-            userEventPublisher.publish(new UserCreatedEvent(request.getEmail(),request.getUsername(),request.getPhoneNumber()));
+            userEventPublisher.publish(new UserCreatedEvent(request.getUsername(),
+                    request.getEmail(),
+                    request.getPhoneNumber() ,
+                    Instant.now().toString()));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -126,9 +129,10 @@ public class UserController {
                 .orElseThrow(() -> new RuntimeException("Token inválido"));
 
         try {
-            PasswordChangedEvent event = new PasswordChangedEvent(
+            PasswordChangedEvent event = new PasswordChangedEvent(user.getUsername(),
                     user.getEmail(),
-                    Instant.now()
+                    user.getPhoneNumber() ,
+                    Instant.now().toString()
             );
             userEventPublisher.publish(event);
         } catch (Exception e) {
