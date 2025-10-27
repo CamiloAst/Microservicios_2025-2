@@ -15,6 +15,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
@@ -33,6 +35,8 @@ public class AuthController {
     private UserEventPublisher userEventPublisher;
     @Autowired
     private UserRepository userRepository;
+    private static final Logger log = LoggerFactory.getLogger(UserLoginEvent.class);
+
 
     @PostMapping("/login")
     @Operation(
@@ -76,7 +80,10 @@ public class AuthController {
             )
         )
         @RequestBody LoginRequest request
-    ) {
+    )
+    {
+        log.info("🔐 Intentando login para usuario {}", request.getUsername());
+
         User user = userRepository.findByUsername(request.getUsername())
                 .orElseThrow(()-> new UsernameNotFoundException("Usuario no existe"));
         String login = userService.login(request);
@@ -87,6 +94,8 @@ public class AuthController {
                             user.getEmail(),
                             user.getPhoneNumber() ,
                             Instant.now().toString()));
+            log.info("✅ Login exitoso, token generado para {}", request.getUsername());
+
         } catch (Exception e) {
             // log.warn("No se pudo publicar evento de login", e);
         }
