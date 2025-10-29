@@ -11,7 +11,7 @@
                 </timestamp>
                 <pattern>
                     <pattern>
-                        {"thread":"%thread","level":"%level","logger":"%logger","message":%jsonMessage,"context":"%mdc"}
+                        {"thread":"%thread","level":"%level","logger":"%logger","message":"%msg","context":"%mdc"}
                     </pattern>
                 </pattern>
                 <logLevel/>
