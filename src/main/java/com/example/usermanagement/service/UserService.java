@@ -68,7 +68,7 @@ public class UserService {
 
 
     @PreAuthorize("#id == authentication.principal.id")
-    public UserResponse updateUser(Long id, RegisterRequest request) {
+    public UserResponse updateUser(Long id, UpdateUserRequest request) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String currentUsername = auth.getName();
 
@@ -79,9 +79,6 @@ public class UserService {
 
         user.setUsername(request.getUsername());
         user.setEmail(request.getEmail());
-        if (request.getPassword() != null) {
-            user.setPassword(passwordEncoder.encode(request.getPassword()));
-        }
         userRepository.save(user);
         return toResponse(user);
     }

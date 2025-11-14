@@ -1,9 +1,6 @@
 package com.example.usermanagement.controller;
 
-import com.example.usermanagement.dto.ErrorResponse;
-import com.example.usermanagement.dto.RegisterRequest;
-import com.example.usermanagement.dto.ResetPasswordRequest;
-import com.example.usermanagement.dto.UserResponse;
+import com.example.usermanagement.dto.*;
 import com.example.usermanagement.entity.User;
 import com.example.usermanagement.events.PasswordChangedEvent;
 import com.example.usermanagement.events.UserCreatedEvent;
@@ -222,7 +219,7 @@ public class UserController {
     public UserResponse updateUser(
             @Parameter(description = "ID del usuario", required = true) @PathVariable Long id,
             @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Datos del usuario a actualizar", required = true)
-            @RequestBody RegisterRequest request) {
+            @RequestBody UpdateUserRequest request) {
         return userService.updateUser(id, request);
     }
 
